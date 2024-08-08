@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
-import Navbar from "@/components/Navbar";
-import { ClerkProvider } from "@clerk/nextjs";
+import Navbar from '@/components/Navbar';
+import { ClerkProvider } from '@clerk/nextjs';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Social Media",
-  description: "Social media app built with Next.js",
+  title: 'Social Media',
+  description: 'Social media app built with Next.js',
 };
 
 export default function RootLayout({

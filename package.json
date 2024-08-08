@@ -11,7 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^5.1.6",
     "@prisma/client": "^5.16.1",
-    "babel-plugin-react-compiler": "^0.0.0-experimental-938cd9a-20240601",
+    "babel-plugin-react-compiler": "^0.0.0-experimental-334f00b-20240725",
     "next": "15.0.0-rc.0",
     "next-cloudinary": "^6.6.2",
     "react": "19.0.0-rc-f994737d14-20240522",

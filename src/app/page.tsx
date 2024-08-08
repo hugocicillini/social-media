@@ -1,8 +1,8 @@
-import AddPost from "@/components/AddPost"
-import Stories from "@/components/Stories"
-import Feed from "@/components/feed/Feed"
-import LeftMenu from "@/components/leftMenu/LeftMenu"
-import RightMenu from "@/components/rightMenu/RightMenu"
+import AddPost from '@/components/AddPost';
+import Stories from '@/components/Stories';
+import Feed from '@/components/feed/Feed';
+import LeftMenu from '@/components/leftMenu/LeftMenu';
+import RightMenu from '@/components/rightMenu/RightMenu';
 
 const Homepage = () => {
   return (
@@ -21,7 +21,7 @@ const Homepage = () => {
         <RightMenu />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Homepage
+export default Homepage;
