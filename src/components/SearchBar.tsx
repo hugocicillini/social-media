@@ -1,24 +1,10 @@
 'use client';
 
 import { searchUsers } from '@/lib/actions';
+import { User } from '@prisma/client';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-type User = {
-  id: string;
-  username: string;
-  avatar: string | null;
-  cover: string | null;
-  name: string | null;
-  surname: string | null;
-  description: string | null;
-  city: string | null;
-  school: string | null;
-  work: string | null;
-  website: string | null;
-  createdAt: Date;
-};
 
 const SearchBar = () => {
   const [search, setSearch] = useState('');
@@ -64,7 +50,7 @@ const SearchBar = () => {
           </button>
         ) : (
           <Image
-            src="/search.png"
+            src={`${search.length > 0 ? 'x' : '/search.png'}`}
             alt="Search"
             width={14}
             height={14}

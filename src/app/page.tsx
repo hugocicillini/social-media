@@ -2,6 +2,7 @@ import AddPost from '@/components/AddPost';
 import Stories from '@/components/Stories';
 import Feed from '@/components/feed/Feed';
 import LeftMenu from '@/components/leftMenu/LeftMenu';
+import RightBarFriends from '@/components/rightMenu/RightBarFriends';
 import RightMenu from '@/components/rightMenu/RightMenu';
 
 const Homepage = () => {
@@ -17,8 +18,9 @@ const Homepage = () => {
           <Feed username="" />
         </div>
       </div>
-      <div className="hidden lg:block w-[30%]">
+      <div className="hidden lg:flex w-[40%]">
         <RightMenu />
+        <RightBarFriends />
       </div>
     </div>
   );

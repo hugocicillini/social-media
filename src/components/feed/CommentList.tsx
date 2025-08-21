@@ -4,7 +4,7 @@ import { addComment } from '@/lib/actions';
 import { useUser } from '@clerk/nextjs';
 import { Comment, User } from '@prisma/client';
 import Image from 'next/image';
-import { useOptimistic, useState } from 'react';
+import { useEffect, useOptimistic, useState } from 'react';
 
 type CommentWithUser = Comment & {
   user: User;
@@ -20,6 +20,11 @@ const CommentList = ({
   const { user } = useUser();
   const [commentState, setCommentState] = useState(comments);
   const [desc, setDesc] = useState('');
+
+  // Sincronizar com novos comentários vindos do servidor
+  useEffect(() => {
+    setCommentState(comments);
+  }, [comments]);
 
   const add = async () => {
     if (!user || !desc) return;
@@ -49,7 +54,10 @@ const CommentList = ({
     try {
       const createdComment = await addComment(postId, desc);
       setCommentState((prev) => [createdComment, ...prev]);
-    } catch (error) {}
+      setDesc(''); // Limpar input após sucesso
+    } catch (error) {
+      console.error('Erro ao adicionar comentário:', error);
+    }
   };
 
   const [optimisticComment, addOptimisticComment] = useOptimistic(
@@ -73,6 +81,7 @@ const CommentList = ({
           >
             <input
               type="text"
+              value={desc}
               placeholder="Faça um comentário..."
               className="bg-transparent outline-none flex-1"
               onChange={(e) => setDesc(e.target.value)}

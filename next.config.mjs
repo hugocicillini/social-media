@@ -2,7 +2,11 @@
 const nextConfig = {
   experimental: {
     reactCompiler: true,
-    ppr: 'incremental'
+    ppr: 'incremental',
+    turbo: {
+      loaders: {},
+      resolveAlias: {},
+    }
   },
   images: {
     remotePatterns: [

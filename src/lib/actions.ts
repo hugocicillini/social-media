@@ -1,9 +1,9 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import prisma from './client';
-import { revalidatePath } from 'next/cache';
 
 export const searchUsers = async (search: string) => {
   const users = await prisma.user.findMany({
@@ -19,10 +19,56 @@ export const searchUsers = async (search: string) => {
   return users;
 };
 
+export const friendsList = async () => {
+  const { userId: currentUserId } = auth();
+
+  if (!currentUserId) throw new Error('Nenhum usuário logado!');
+
+  const followers = await prisma.follower.findMany({
+    where: {
+      followingId: currentUserId,
+    },
+    select: {
+      follower: {
+        select: {
+          id: true,
+          name: true,
+          surname: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  const followings = await prisma.follower.findMany({
+    where: {
+      followerId: currentUserId,
+    },
+    select: {
+      following: {
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  const followersList = followers.map((f) => f.follower);
+  const followingsList = followings.map((f) => f.following);
+
+  const friends = followersList.filter((follower) =>
+    followingsList.some((following) => following.id === follower.id)
+  );
+
+  return friends;
+};
+
 export const switchFollow = async (userId: string) => {
   const { userId: currentUserId } = auth();
 
-  if (!currentUserId) throw new Error('Nenhum usuário logado!');
+  if (!currentUserId) throw new Error('Nenhum usuário logado!');
 
   try {
     const existingFollow = await prisma.follower.findFirst({
@@ -69,7 +115,7 @@ export const switchFollow = async (userId: string) => {
 export const switchBlock = async (userId: string) => {
   const { userId: currentUserId } = auth();
 
-  if (!currentUserId) throw new Error('Nenhum usuário logado!');
+  if (!currentUserId) throw new Error('Nenhum usuário logado!');
 
   try {
     const existingBlock = await prisma.block.findFirst({
@@ -102,7 +148,7 @@ export const switchBlock = async (userId: string) => {
 export const acceptFollowRequest = async (userId: string) => {
   const { userId: currentUserId } = auth();
 
-  if (!currentUserId) throw new Error('Nenhum usuário logado!');
+  if (!currentUserId) throw new Error('Nenhum usuário logado!');
 
   try {
     const existingFollowRequest = await prisma.followRequest.findFirst({
@@ -135,7 +181,7 @@ export const acceptFollowRequest = async (userId: string) => {
 export const declineFollowRequest = async (userId: string) => {
   const { userId: currentUserId } = auth();
 
-  if (!currentUserId) throw new Error('Nenhum usuário logado!');
+  if (!currentUserId) throw new Error('Nenhum usuário logado!');
 
   try {
     const existingFollowRequest = await prisma.followRequest.findFirst({
@@ -212,9 +258,26 @@ export const updateProfile = async (
 export const switchLike = async (postId: number) => {
   const { userId } = auth();
 
-  if (!userId) throw new Error('Nenhum usuário logado!');
+  if (!userId) throw new Error('Nenhum usuário logado!');
 
   try {
+    // Verificar se o usuário existe no banco, se não, criar
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      // Criar usuário se não existir
+      await prisma.user.create({
+        data: {
+          id: userId,
+          username: 'user_' + userId.slice(-6), // Username temporário
+          avatar: '/noAvatar.png',
+          cover: '/noCover.png',
+        },
+      });
+    }
+
     const existingLike = await prisma.like.findFirst({
       where: {
         postId,
@@ -245,9 +308,26 @@ export const switchLike = async (postId: number) => {
 export const addComment = async (postId: number, desc: string) => {
   const { userId } = auth();
 
-  if (!userId) throw new Error('Nenhum usuário logado!');
+  if (!userId) throw new Error('Nenhum usuário logado!');
 
   try {
+    // Verificar se o usuário existe no banco, se não, criar
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      // Criar usuário se não existir
+      await prisma.user.create({
+        data: {
+          id: userId,
+          username: 'user_' + userId.slice(-6), // Username temporário
+          avatar: '/noAvatar.png',
+          cover: '/noCover.png',
+        },
+      });
+    }
+
     const createdComment = await prisma.comment.create({
       data: {
         postId,
@@ -259,6 +339,7 @@ export const addComment = async (postId: number, desc: string) => {
       },
     });
 
+    revalidatePath('/');
     return createdComment;
   } catch (error) {
     console.log(error);
@@ -281,9 +362,26 @@ export const addPost = async (formData: FormData, img: string) => {
 
   const { userId } = auth();
 
-  if (!userId) throw new Error('Nenhum usuário logado!');
+  if (!userId) throw new Error('Nenhum usuário logado!');
 
   try {
+    // Verificar se o usuário existe no banco, se não, criar
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      // Criar usuário se não existir
+      await prisma.user.create({
+        data: {
+          id: userId,
+          username: 'user_' + userId.slice(-6), // Username temporário
+          avatar: '/noAvatar.png',
+          cover: '/noCover.png',
+        },
+      });
+    }
+
     await prisma.post.create({
       data: {
         desc: validateDesc.data,
@@ -301,9 +399,26 @@ export const addPost = async (formData: FormData, img: string) => {
 export const addStory = async (img: string) => {
   const { userId } = auth();
 
-  if (!userId) throw new Error('Nenhum usuário logado!');
+  if (!userId) throw new Error('Nenhum usuário logado!');
 
   try {
+    // Verificar se o usuário existe no banco, se não, criar
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      // Criar usuário se não existir
+      await prisma.user.create({
+        data: {
+          id: userId,
+          username: 'user_' + userId.slice(-6), // Username temporário
+          avatar: '/noAvatar.png',
+          cover: '/noCover.png',
+        },
+      });
+    }
+
     const existingStory = await prisma.story.findFirst({
       where: {
         userId,
@@ -338,7 +453,7 @@ export const addStory = async (img: string) => {
 export const deletePost = async (postId: number) => {
   const { userId } = auth();
 
-  if (!userId) throw new Error('Nenhum usuário logado!');
+  if (!userId) throw new Error('Nenhum usuário logado!');
 
   try {
     await prisma.post.delete({
@@ -350,5 +465,34 @@ export const deletePost = async (postId: number) => {
     revalidatePath('/');
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const editPost = async (postId: number, desc: string) => {
+  const { userId } = auth();
+
+  if (!userId) throw new Error('Nenhum usuário logado!');
+
+  const Desc = z.string().min(1).max(250);
+  const validateDesc = Desc.safeParse(desc);
+
+  if (!validateDesc.success) {
+    throw new Error('Descrição inválida!');
+  }
+
+  try {
+    await prisma.post.update({
+      where: {
+        id: postId,
+        userId, // Garantir que só o dono pode editar
+      },
+      data: {
+        desc: validateDesc.data,
+      },
+    });
+    revalidatePath('/');
+  } catch (error) {
+    console.log(error);
+    throw new Error('Erro ao editar post!');
   }
 };
