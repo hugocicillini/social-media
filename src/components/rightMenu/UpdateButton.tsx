@@ -1,12 +1,17 @@
-"use client"
+'use client';
 
-import { useFormStatus } from "react-dom"
+import { useFormStatus } from 'react-dom';
 
 const UpdateButton = () => {
-  const { pending } = useFormStatus()
+  const { pending } = useFormStatus();
   return (
-    <button className="bg-blue-500 p-2 mt-2 rounded-md text-white disabled:bg-opacity-50 disabled:cursor-not-allowed" disabled={pending}>{pending ? "Atualizando..." : "Atualizar"}</button>
-  )
-}
+    <button
+      className="bg-blue-500 p-2 mt-6 w-full rounded-md text-white disabled:bg-opacity-50 disabled:cursor-not-allowed"
+      disabled={pending}
+    >
+      {pending ? 'Atualizando...' : 'Atualizar'}
+    </button>
+  );
+};
 
-export default UpdateButton
+export default UpdateButton;

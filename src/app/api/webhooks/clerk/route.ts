@@ -49,60 +49,125 @@ export async function POST(req: Request) {
     })
   }
 
-  // Do something with the payload
-  // For this guide, you simply log the payload to the console
+  // Extract event data
   const { id } = evt.data;
   const eventType = evt.type;
-  // console.log(`Webhook with and ID of ${id} and type of ${eventType}`)
-  // console.log('Webhook body:', body)
+  
+  console.log(`Webhook received: ${eventType} for user ${id}`);
+  
+  // Parse payload once
+  const parsedData = JSON.parse(body).data;
 
   if (eventType === 'user.created') {
     try {
+      // Verificar se o usuário já existe
+      const existingUser = await prisma.user.findUnique({
+        where: { id: parsedData.id }
+      });
+
+      if (existingUser) {
+        console.log(`User already exists: ${parsedData.id}`);
+        return new Response('Usuário já existe!', {
+          status: 200
+        });
+      }
+
       await prisma.user.create({
         data: {
-          id: evt.data.id,
-          username: JSON.parse(body).data.username,
-          avatar: JSON.parse(body).data.image_url || "/noAvatar.png",
-          cover: "/noCover.png"
+          id: parsedData.id,
+          username: parsedData.username || `user_${parsedData.id.slice(-6)}`,
+          avatar: parsedData.image_url || "/noAvatar.png",
+          cover: "/noCover.png",
+          name: parsedData.first_name || null,
+          surname: parsedData.last_name || null,
         }
       })
 
-      revalidatePath('/profile/[username]')
+      console.log(`User created successfully: ${parsedData.id}`);
+      revalidatePath('/profile/[username]');
 
-      return new Response('Usuário criado!'), {
+      return new Response('Usuário criado!', {
         status: 200
-      }
+      });
 
     } catch (err) {
-      console.log(err)
+      console.error('Error creating user:', err);
       return new Response('Falha ao criar o usuário!', {
         status: 500
-      })
+      });
     }
-
   }
 
   if (eventType === 'user.updated') {
     try {
-      await prisma.user.update({
+      // Use upsert para criar ou atualizar
+      await prisma.user.upsert({
         where: {
-          id: evt.data.id
+          id: parsedData.id
         },
-        data: {
-          username: JSON.parse(body).data.username,
-          avatar: JSON.parse(body).data.image_url || "/noAvatar.png",
+        update: {
+          username: parsedData.username,
+          avatar: parsedData.image_url || "/noAvatar.png",
+          name: parsedData.first_name || null,
+          surname: parsedData.last_name || null,
+        },
+        create: {
+          id: parsedData.id,
+          username: parsedData.username || `user_${parsedData.id.slice(-6)}`,
+          avatar: parsedData.image_url || "/noAvatar.png",
+          cover: "/noCover.png",
+          name: parsedData.first_name || null,
+          surname: parsedData.last_name || null,
         }
       })
 
-      return new Response('Usuário atualizado!'), {
+      console.log(`User upserted successfully: ${parsedData.id}`);
+      revalidatePath('/profile/[username]');
+
+      return new Response('Usuário atualizado!', {
         status: 200
-      }
+      });
 
     } catch (err) {
-      console.log(err)
+      console.error('Error updating user:', err);
       return new Response('Falha ao atualizar o usuário!', {
         status: 500
-      })
+      });
+    }
+  }
+
+  if (eventType === 'user.deleted') {
+    try {
+      // Verificar se o usuário existe antes de deletar
+      const existingUser = await prisma.user.findUnique({
+        where: { id: parsedData.id }
+      });
+
+      if (!existingUser) {
+        console.log(`User not found for deletion: ${parsedData.id}`);
+        return new Response('Usuário não encontrado!', {
+          status: 200
+        });
+      }
+
+      await prisma.user.delete({
+        where: {
+          id: parsedData.id
+        }
+      });
+
+      console.log(`User deleted successfully: ${parsedData.id}`);
+      revalidatePath('/');
+
+      return new Response('Usuário deletado!', {
+        status: 200
+      });
+
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      return new Response('Falha ao deletar o usuário!', {
+        status: 500
+      });
     }
   }
 

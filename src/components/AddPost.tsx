@@ -12,7 +12,10 @@ const AddPost = () => {
   const [desc, setDesc] = useState('');
   const [img, setImg] = useState<any>('');
 
-  if (!isLoaded) return 'Carregando...';
+  if (!isLoaded && user) return 'Carregando...';
+
+  // Se não há usuário logado, não renderizar o componente
+  if (!user) return null;
 
   const handleSubmit = async (formData: FormData) => {
     try {

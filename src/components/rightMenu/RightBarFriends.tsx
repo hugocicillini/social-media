@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { friendsList } from '@/lib/actions';
+import { useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 
 interface Friend {
@@ -12,19 +13,33 @@ interface Friend {
 }
 
 const RightBarFriends = () => {
+  const { user, isLoaded } = useUser();
   const [friends, setFriends] = useState<Friend[]>([]);
 
   useEffect(() => {
     const fetchFriends = async () => {
-      const friendsData = await friendsList();
-      console.log(friendsData);
-      setFriends(friendsData);
+      // Só buscar amigos se o usuário estiver logado
+      if (!user) return;
+      
+      try {
+        const friendsData = await friendsList();
+        console.log(friendsData);
+        setFriends(friendsData);
+      } catch (error) {
+        console.error('Erro ao buscar amigos:', error);
+      }
     };
 
-    fetchFriends();
-  }, []);
+    if (isLoaded) {
+      fetchFriends();
+    }
+  }, [user, isLoaded]);
 
   console.log(friends);
+
+  // Se não há usuário logado, não renderizar
+  if (!isLoaded && user) return <div>Carregando...</div>;
+  if (!user) return null;
 
   return (
     <div className="hidden xl:block w-[40%] mx-6 p-4 bg-white rounded-lg shadow-md text-sm">

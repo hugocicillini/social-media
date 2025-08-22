@@ -208,6 +208,10 @@ export const updateProfile = async (
   prevState: { success: boolean; error: boolean },
   payload: { formData: FormData; cover: string }
 ) => {
+  const { userId } = auth();
+
+  if (!userId) throw new Error('Nenhum usuário logado!');
+
   const { formData, cover } = payload;
 
   const fields = Object.fromEntries(formData);
@@ -238,9 +242,6 @@ export const updateProfile = async (
     console.log(validatedFields.error.flatten().fieldErrors);
     return { success: false, error: true };
   }
-  const { userId } = auth();
-
-  if (!userId) return { success: false, error: true };
 
   try {
     await prisma.user.update({

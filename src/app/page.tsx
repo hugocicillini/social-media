@@ -15,7 +15,7 @@ const Homepage = () => {
         <div className="flex flex-col gap-6">
           <Stories />
           <AddPost />
-          <Feed username="" />
+          <Feed />
         </div>
       </div>
       <div className="hidden lg:flex w-[40%]">
