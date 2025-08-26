@@ -16,7 +16,7 @@ const Ads = ({ size }: { size: 'sm' | 'md' | 'lg' }) => {
           }`}
         >
           <Image
-            src="https://images.pexels.com/photos/11163069/pexels-photo-11163069.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
+            src="https://images.ctfassets.net/wfutmusr1t3h/4az9qJsmDqojZqmUffRGvw/f8c7b8ac48a85439f478dee3d991a1d7/1200x630-AI-Blog-LIGHT_2x.png?w=1280&q=75"
             alt=""
             fill
             className="rounded-lg object-cover"
@@ -24,20 +24,20 @@ const Ads = ({ size }: { size: 'sm' | 'md' | 'lg' }) => {
         </div>
         <div className="flex items-center gap-4">
           <Image
-            src="https://images.pexels.com/photos/11163069/pexels-photo-11163069.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/GitHub_Invertocat_Logo.svg/250px-GitHub_Invertocat_Logo.svg.png"
             alt=""
             width={24}
             height={24}
             className="rounded-full w-6 h-6 object-cover"
           />
-          <span className="text-blue-500 font-medium">Hugo Cicillini</span>
+          <span className="text-blue-500 font-medium">Github</span>
         </div>
         <p className={`${size === 'sm' ? 'text-xs' : 'text-sm'}`}>
           {size === 'sm'
             ? 'lorem ipsun dolor sit amet consectur adisiplinig elit'
             : size === 'md'
-            ? 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Pariatur, vel et! Facere odit dolorum inventore esse amet suscipit explicabo asperiores.'
-            : 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos explicabo quos enim ea! Praesentium earum ipsa quis velit? At culpa eum cupiditate qui consequuntur dignissimos quisquam beatae facere, voluptas porro?'}
+            ? 'We invite everyone to a captivating morning of discovery, designed to demystify the future of software development.'
+            : 'We invite everyone to a captivating morning of discovery, designed to demystify the future of software development. Youll hear from leading experts, connect with fellow innovators, and leave with a clear vision of the road ahead.'}
         </p>
         <button className="bg-gray-200 text-gray-500 p-2 text-xs rounded-lg">
           Saiba mais

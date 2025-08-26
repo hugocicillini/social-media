@@ -6,7 +6,7 @@ const nextConfig = {
     turbo: {
       loaders: {},
       resolveAlias: {},
-    }
+    },
   },
   images: {
     remotePatterns: [
@@ -21,6 +21,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.ctfassets.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
       },
     ],
   },

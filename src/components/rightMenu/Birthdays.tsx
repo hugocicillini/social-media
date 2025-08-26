@@ -16,7 +16,7 @@ const Birthdays = () => {
             height={40}
             className="w-10 h-10 rounded-full object-cover"
           />
-          <span className="font-semibold">Hugo Cicillini</span>
+          <span className="font-semibold">Pedro Oliveira</span>
         </div>
         <div className="flex gap-3 justify-end">
           <button className="bg-blue-500 text-white text-xs px-2 py-1 rounded-md">

@@ -1,10 +1,10 @@
 import Feed from '@/components/feed/Feed';
 import LeftMenu from '@/components/leftMenu/LeftMenu';
 import RightMenu from '@/components/rightMenu/RightMenu';
+import UserNotFound from '@/components/UserNotFound';
 import prisma from '@/lib/client';
 import { auth } from '@clerk/nextjs/server';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
 
 const ProfilePage = async ({ params }: { params: { username: string } }) => {
   const username = params.username;
@@ -24,7 +24,7 @@ const ProfilePage = async ({ params }: { params: { username: string } }) => {
     },
   });
 
-  if (!user) return null;
+  if (!user) return <UserNotFound type="not-found" username={username} />;
 
   const { userId: currentUserId } = auth();
 
@@ -43,7 +43,7 @@ const ProfilePage = async ({ params }: { params: { username: string } }) => {
     isBlocked = false;
   }
 
-  if (isBlocked) return notFound();
+  if (isBlocked) return <UserNotFound type="blocked" username={username} />;
 
   return (
     <div className="flex gap-6 pt-6">

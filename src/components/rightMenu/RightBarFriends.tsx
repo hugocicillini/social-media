@@ -57,7 +57,7 @@ const RightBarFriends = () => {
                   height={24}
                   className="rounded-full"
                 />
-                <span>{`${friend.name} ${friend.surname}`}</span>
+                <span>{`${friend.name} ${friend.surname ? friend.surname : ''}`}</span>
               </div>
             </div>
           ))
